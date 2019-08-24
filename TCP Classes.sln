@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TCP Classes", "TCP Classes\TCP Classes.vbproj", "{FDB12C1C-E487-4237-954C-0D1126E3E938}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TCP and Conversion Classes", "TCP and Conversion Classes\TCP and Conversion Classes.vbproj", "{597936B2-F385-4E6E-BC53-5A7EDF0F87A5}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TCP tester", "TCP tester\TCP tester.vbproj", "{1974DAF7-E067-47E3-94F9-97194691532F}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Async TCP", "Async TCP\Async TCP.vbproj", "{4052F858-9B0D-4F35-B44D-6190B37C663E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDB12C1C-E487-4237-954C-0D1126E3E938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDB12C1C-E487-4237-954C-0D1126E3E938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDB12C1C-E487-4237-954C-0D1126E3E938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDB12C1C-E487-4237-954C-0D1126E3E938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{597936B2-F385-4E6E-BC53-5A7EDF0F87A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{597936B2-F385-4E6E-BC53-5A7EDF0F87A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{597936B2-F385-4E6E-BC53-5A7EDF0F87A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{597936B2-F385-4E6E-BC53-5A7EDF0F87A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1974DAF7-E067-47E3-94F9-97194691532F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1974DAF7-E067-47E3-94F9-97194691532F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1974DAF7-E067-47E3-94F9-97194691532F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1974DAF7-E067-47E3-94F9-97194691532F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4052F858-9B0D-4F35-B44D-6190B37C663E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4052F858-9B0D-4F35-B44D-6190B37C663E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4052F858-9B0D-4F35-B44D-6190B37C663E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4052F858-9B0D-4F35-B44D-6190B37C663E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04F27B58-3054-48E5-95FD-FE3946F08789}
+	EndGlobalSection
+EndGlobal
