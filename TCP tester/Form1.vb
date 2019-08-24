@@ -2,12 +2,18 @@
 Imports System.Net
 Imports System.Text
 Imports System.IO
-
 Imports System.Threading
 
 
 Public Class Form1
-    Dim TCP As New TCP_Functions
+    Dim counter As Integer = 0
+    'Dim serverStream As NetworkStream
+    'Dim serverClient As TcpClient
+
+    Dim clientStream As NetworkStream
+
+    Dim TCP As New TCP_Function2
+
     Delegate Sub SetTextCallback(ByVal [text] As String)
     Public Sub SetText(ByVal [text] As String)
 
@@ -22,197 +28,45 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub Button_send_Click(sender As Object, e As EventArgs) Handles Button_send.Click
-        TCP.SendBytes(TCP.StringToBytes(TextBox1.Text), TextBox_RemoteIP.Text, CInt(TextBox_RemotePort.Text))
+    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
+        If CheckBox1.Checked = True Then
+            Dim T1 As New Thread(AddressOf Receive)
+            T1.Start()
+        End If
     End Sub
 
-    Private Sub Button_receive_Click(sender As Object, e As EventArgs) Handles Button_receive.Click
-        Dim T1 As New Thread(AddressOf receive)
-        T1.Start(CInt(TextBox_ListenPort.Text))
-    End Sub
+    Private Sub Receive()
 
+        Dim rets As Object() = TCP.Server_Connect(CInt(TextBox_ListenPort.Text))
+        Dim serverClient As TcpClient = rets(0)
+        Dim serverStream As NetworkStream = rets(1)
 
-    Private Sub receive(ByVal port As Integer)
-        Dim message As String = TCP.BytesToString(TCP.ReceiveBytes(port))
-        RichTextBox1.AppendText(message)
-        RichTextBox1.AppendText(vbNewLine)
-    End Sub
+        Dim T1 As New Thread(AddressOf Receive2)
+        T1.Start(serverStream)
 
+        counter += 1
 
-    Private Sub Button_SendFile_Click(sender As Object, e As EventArgs) Handles Button_SendFile.Click
-
-        Dim ofd As New OpenFileDialog
-        ofd.ShowDialog()
-        Dim path As String = ofd.FileName
-
-        'RichTextBox1.AppendText("Sending file...")
-        'RichTextBox1.AppendText(vbNewLine)
-        SetText("sending file...")
-
-        TCP.SendBytes(TCP.FileToBytes(path), TextBox_RemoteIP.Text, CInt(TextBox_RemotePort.Text))
-
-        SetText("File Sent.")
-    End Sub
-
-    Private Sub Button_ReceiveFile_Click(sender As Object, e As EventArgs) Handles Button_ReceiveFile.Click
-        Dim T2 As New Thread(AddressOf ReceiveFile)
-        T2.SetApartmentState(ApartmentState.STA)
-        T2.Start(CInt(TextBox_ListenPort.Text))
-    End Sub
-
-    Private Sub ReceiveFile(ByVal port As Integer)
-
-        Dim bytearr As Byte() = Me.ReceiveBytes(port)
-        Dim sfd As New SaveFileDialog
-        sfd.ShowDialog()
-
-        Dim path As String = sfd.FileName
-
-        TCP.BytesToFile(bytearr, path)
+        If CheckBox1.Checked = True And counter <> 2 Then
+            Call Receive()
+        End If
 
     End Sub
 
-    Function ReceiveBytes(ByVal Port As Integer) As Byte()
-
-        SetText("listening for connection...")
-        Dim Listener As New TcpListener(IPAddress.Any, Port)
-        Listener.Start(100)
-
-        Dim client As TcpClient = Listener.AcceptTcpClient()
-        Dim stream As NetworkStream = client.GetStream()
-        Listener.Stop()
-        SetText("starting download...")
-        Dim receiveLength(3) As Byte
-
-        Dim totalRead As Integer = 0
-        Dim currentRead As Integer = 0
-
-        While totalRead < receiveLength.Length
-            currentRead = stream.Read(receiveLength, totalRead, receiveLength.Length - totalRead)
-            totalRead += currentRead
+    Private Sub Receive2(ByVal serverStream As NetworkStream)
+        While CheckBox1.Checked = True
+            Dim bytearr As Byte() = TCP.Receive_Bytes(ServerStream)
+            Dim retstr As String = TCP.BytesToString(bytearr)
+            SetText(retstr)
         End While
+    End Sub
 
-        totalRead = 0
-        currentRead = 0
-        Dim receiveData(BitConverter.ToInt32(receiveLength, 0) - 1) As Byte 'critical for array size 
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        clientStream = TCP.Client_Connect(TextBox_RemoteIP.Text, CInt(TextBox_RemotePort.Text))
+    End Sub
 
-        While totalRead < receiveData.Length
-            currentRead = stream.Read(receiveData, totalRead, receiveData.Length - totalRead)
-            totalRead += currentRead
-        End While
-        SetText("complete")
-        stream.Close()
-        client.Close()
-
-
-        Return receiveData
-    End Function
-
-End Class
-
-Public Class TCP_Functions
-
-
-
-    Const bufferSize As Integer = 1024
-    Function SendBytes(ByVal SendData As Byte(), ByVal IP As String, ByVal Port As Integer) As Integer
-
-        Dim TCP As New TcpClient
-        TCP.Connect(IP, Port)
-        Dim stream As NetworkStream = TCP.GetStream()
-
-        Dim sendLength As Byte() = BitConverter.GetBytes(SendData.Length)
-
-        stream.Write(sendLength, 0, sendLength.Length)
-
-        Dim Totalsent As Integer = 0
-        Dim Currentsent As Integer = bufferSize
-
-        While (Totalsent < SendData.Length)
-
-            If (SendData.Length - Totalsent < bufferSize) Then
-                Currentsent = SendData.Length - Totalsent
-            End If
-
-            stream.Write(SendData, Totalsent, Currentsent)
-            Totalsent += Currentsent
-        End While
-
-        Return Totalsent 'return # of bytes sent
-    End Function
-
-    Function ReceiveBytes(ByVal Port As Integer) As Byte()
-    
-        Dim Listener As New TcpListener(IPAddress.Any, Port)
-        Listener.Start(100)
-
-        Dim client As TcpClient = Listener.AcceptTcpClient()
-        Dim stream As NetworkStream = client.GetStream()
-
-        Listener.Stop()
-
-        Dim receiveLength(3) As Byte
-
-        Dim totalRead As Integer = 0
-        Dim currentRead As Integer = 0
-
-        While totalRead < receiveLength.Length
-            currentRead = stream.Read(receiveLength, totalRead, receiveLength.Length - totalRead)
-            totalRead += currentRead
-        End While
-
-        totalRead = 0
-        currentRead = 0
-        Dim receiveData(BitConverter.ToInt32(receiveLength, 0) - 1) As Byte 'critical for array size 
-
-        While totalRead < receiveData.Length
-            currentRead = stream.Read(receiveData, totalRead, receiveData.Length - totalRead)
-            totalRead += currentRead
-        End While
-
-        stream.Close()
-        client.Close()
-
-
-        Return receiveData
-    End Function
-
-    Function FileToBytes(Path As String) As Byte()
-
-        Dim fullPath As String = Path '& "\" & FileName
-
-        Dim Fs As New FileStream(fullPath, FileMode.Open, FileAccess.Read)
-
-        Dim output(Fs.Length - 1) As Byte
-
-        Fs.Read(output, 0, Fs.Length)
-        Fs.Close()
-
-        Return output
-    End Function
-
-    Function BytesToFile(ByteArr As Byte(), Path As String) As Boolean
-
-        Dim fullPath As String = Path '& "\" & FileName
-
-        Dim Fs As New FileStream(Path, FileMode.Create, FileAccess.Write)
-        Fs.Write(ByteArr, 0, ByteArr.Length)
-        Fs.Close()
-
-        Return True
-    End Function
-
-    Function StringToBytes(Input As String) As Byte()
-        Dim byteArr() As Byte = Encoding.ASCII.GetBytes(Input)
-        Return byteArr
-    End Function
-
-    Function BytesToString(Input As Byte()) As String
-        Dim output As String = Encoding.ASCII.GetString(Input)
-        Return output
-    End Function
-
-
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        TCP.Send_Bytes(TCP.StringToBytes(TextBox4.Text), clientStream)
+    End Sub
 End Class
 
 Public Class TCP_Function2
@@ -287,6 +141,16 @@ Public Class TCP_Function2
         End While
 
         Return Totalsent 'return # of bytes sent
+    End Function
+
+    Function StringToBytes(Input As String) As Byte()
+        Dim byteArr() As Byte = Encoding.ASCII.GetBytes(Input)
+        Return byteArr
+    End Function
+
+    Function BytesToString(Input As Byte()) As String
+        Dim output As String = Encoding.ASCII.GetString(Input)
+        Return output
     End Function
 
 End Class

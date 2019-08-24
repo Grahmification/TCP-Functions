@@ -8,17 +8,17 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("TCP tester")> 
+<Assembly: AssemblyTitle("TCP Tester 2")> 
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("TCP tester")> 
+<Assembly: AssemblyProduct("TCP Tester 2")> 
 <Assembly: AssemblyCopyright("Copyright ©  2014")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("0ebc1696-7a5e-4cfb-a6c7-3d41f526f0ee")> 
+<Assembly: Guid("08196fe9-4524-43cc-b3f7-7a8a56f0fa83")> 
 
 ' Version information for an assembly consists of the following four values:
 '
